@@ -1,16 +1,31 @@
 (function (window) {
-	function Char(image) {
+	function Hero(image) {
 		this.initialize(image);
 	}
- 	Char.prototype = new Bitmap();
- 	Char.prototype.Bitmap_initialize = Char.prototype.initialize;
 
+ 	Hero.prototype.initialize = function (image) {
+ 		var data = {
+ 			framerate: 20,
+ 			images: [image],
+ 			frames: {
+ 				width: 65,
+ 				height: 94,
+ 				count:12
+ 			},
+ 			animations: {
+ 				down: [0,2],
+ 				up: [3,5],
+ 				left: [6,9],
+ 				right: [10,12]
+ 			}
+ 		}
 
- 	Char.prototype.initialize = function (image) {
- 		this.Bitmap_initialize(image);
- 		this.name = 'Char';
+ 		this.spriteSheet = new createjs.SpriteSheet(data);
+ 		this.name = 'Hero';
  		this.snapToPixel = true;
+
+ 		this.up = new createjs.Sprite(this.spriteSheet, "up");
  	}	
 
- 	window.Char = Char;
+ 	window.Hero = Hero;
 } (window));

@@ -1,24 +1,40 @@
-var stage,
- 	background,
- 	pressedKeys,
- 	assets = [],
- 	BACKGROUND = 'assets/background.jpg',
+var BACKGROUND = 'assets/background.jpg',
  	CHAR = 'assets/char.png';
 
-function init() {
-	var requestedAssets = 0,
-		loadedAssets = 0;	
+function _game() {
+	window.Game = this;
+	var self = this,
+		stage,
+		hero,
+		assets = [],
+		requestedAssets = 0,
+		loadedAssets = 0;
 
-	stage = new createjs.Stage("demoCanvas");
-		
-	function loadResources() {
-		loadImage(CHAR);
-		loadImage(BACKGROUND);
+	this.initializeGame = function() {
+		var canvas = document.getElementById("demoCanvas");
+
+		stage = new createjs.Stage("demoCanvas");
+
+		background = new createjs.Bitmap(assets[BACKGROUND]);
+		stage.addChild(background);
+
+		hero = new Hero(assets[CHAR]);
+		hero.x = canvas.width/2
+		hero.y = canvas.height/2;
+		stage.addChild(hero);	
+		document.onkeydown = self.handleKeyDown;
+
+		createjs.Ticker.on("tick", self.tick);
 	}
 	
-	function loadImage(assetSource) {
+	this.loadResources = function() {
+		this.loadImage(CHAR);
+		this.loadImage(BACKGROUND);
+	}
+	
+	this.loadImage = function(assetSource) {
 		var img = new Image();
-		img.onload = onLoadedAsset;
+		img.onload = self.onLoadedAsset;
 		img.src = assetSource;
 
 		assets[assetSource] = img;
@@ -26,47 +42,37 @@ function init() {
 		++requestedAssets;
 	}
 	
-	function onLoadedAsset(e) {
+	this.onLoadedAsset = function(e) {
 		++loadedAssets;
 		if ( loadedAssets == requestedAssets ) {
-			initializeGame();
+			self.initializeGame();
 		}
 	}
-
-
-	function initializeGame() {
-		background = new createjs.Bitmap(assets[BACKGROUND]);
-		stage.addChild(background);		
-	}
 	
-
-	document.onkeydown = handleKeyDown;
-	loadResources();
-	
-	createjs.Ticker.on("tick", tick);
-}
-
-function tick(event) {
-    stage.update(event);
-}
-
-function handleKeyDown(event) {
-	var key = event.keyCode;
-
-	if (key == 65 || key == 37 ) {  //left
-		background.x--;
-	} 
-	if (key == 68 || key == 39 ) { //right
-		background.x++;
-	} 
-	if (key == 83 || key == 38 ) { //up
-		background.y--;
-	} 
-	if (key == 87 || key == 40 ) { //down
-		background.y++;
+	this.tick = function(event) {
+	    stage.update(event);
 	}
 
+	this.handleKeyDown = function(event) {
+		var key = event.keyCode;
 
-	console.log(key)
+		if (key == 65 || key == 37 ) {  //left
+			background.x-= 5;
+		} 
+		if (key == 68 || key == 39 ) { //right
+			background.x+= 5;
+		} 
+		if (key == 83 || key == 38 ) { //up
+			background.y-= 5;
+		} 
+		if (key == 87 || key == 40 ) { //down
+			background.y+= 5;
+		}
+
+		console.log(key)
+	}
+
+	self.loadResources();	
 }
 
+new _game();
