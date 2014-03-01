@@ -1,34 +1,47 @@
-var stage, circle, background, pressedKeys;
+var stage,
+ 	background,
+ 	pressedKeys,
+ 	assets = [],
+ 	BACKGROUND = 'assets/background.jpg',
+ 	CHAR = 'assets/char.png';
 
 function init() {
-	var backgroundImage = new Image();
-	backgroundImage.onload = onImageLoaded;
-	backgroundImage.src = 'assets/background.jpg';
+	var requestedAssets = 0,
+		loadedAssets = 0;	
 
 	stage = new createjs.Stage("demoCanvas");
+		
+	function loadResources() {
+		loadImage(CHAR);
+		loadImage(BACKGROUND);
+	}
 	
+	function loadImage(assetSource) {
+		var img = new Image();
+		img.onload = onLoadedAsset;
+		img.src = assetSource;
+
+		assets[assetSource] = img;
+
+		++requestedAssets;
+	}
 	
-	function onImageLoaded(e) {
-		background = new createjs.Bitmap(backgroundImage);
-		stage.addChild(background);
-		stage.addChild(circle);
+	function onLoadedAsset(e) {
+		++loadedAssets;
+		if ( loadedAssets == requestedAssets ) {
+			initializeGame();
+		}
 	}
 
-	circle = new createjs.Shape();
-	circle.graphics.beginFill("red").drawCircle(0, 0, 40);
-	circle.y = 50;
+
+	function initializeGame() {
+		background = new createjs.Bitmap(assets[BACKGROUND]);
+		stage.addChild(background);		
+	}
+	
 
 	document.onkeydown = handleKeyDown;
-
-
-	// Stage will pass delta when it calls stage.update(arg)
-	// which will pass them to tick event handlers for us in time based animation.
-	circle.on("tick", function(event) {
-        var tickerEvent = event.params[0];
-        var delta = tickerEvent.delta;
-        circle.x += delta/1000*100;
-        if (circle.x > stage.canvas.width) { circle.x = 0; }
-    });
+	loadResources();
 	
 	createjs.Ticker.on("tick", tick);
 }
