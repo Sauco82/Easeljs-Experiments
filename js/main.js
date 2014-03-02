@@ -57,16 +57,16 @@ function _game() {
 		var key = event.keyCode;
 
 		if (key == 65 || key == 37 ) {  //left
-			background.x-= 5;
+			stage.x-= 5;
 		} 
 		if (key == 68 || key == 39 ) { //right
-			background.x+= 5;
+			stage.x+= 5;
 		} 
 		if (key == 83 || key == 38 ) { //up
-			background.y-= 5;
+			stage.y-= 5;
 		} 
 		if (key == 87 || key == 40 ) { //down
-			background.y+= 5;
+			stage.y+= 5;
 		}
 
 		console.log(key)
